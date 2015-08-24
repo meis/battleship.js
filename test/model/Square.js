@@ -12,5 +12,7 @@ describe('Square', () => {
     let s = new Square('A1');
 
     assert.equal(s.name, 'A1');
+    assert.equal(s.ship, undefined);
+    assert.equal(s.available, true);
   });
 });
