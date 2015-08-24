@@ -13,4 +13,20 @@ describe('Ship', () => {
 
     assert.equal(s.size, 4);
   });
+
+  it('sinks if hit enough times', () => {
+    let s = new Ship(4);
+
+    assert.equal(s.size, 4);
+    assert.notOk(s.sunk);
+
+    s.hit()
+    assert.notOk(s.sunk);
+    s.hit()
+    assert.notOk(s.sunk);
+    s.hit()
+    assert.notOk(s.sunk);
+    s.hit()
+    assert.ok(s.sunk);
+  });
 });

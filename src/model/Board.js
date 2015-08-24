@@ -45,6 +45,62 @@ export default class Board {
     return neighbours;
   }
 
+  // Try to put a ship from initial square in
+  // horizontal/vertical direction.
+  // Returns false if any square is unavailable
+  putShipAt(ship, square, vertical=false) {
+    let squares = this._checkSquares(square, ship.size, vertical);
+
+    if (squares) {
+      // Disable ship squares and adjacent ones
+      squares.forEach( s => {
+        s.ship = ship;
+        s.available = false;
+        this.neighbourSquares(s.name).forEach( n => {
+          let [x, y] = this.squareCoordsFromName(n);
+          this.squares[x][y].available = false;
+        } );
+      } );
+
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+  // Return an array of 'size' available squares in
+  // horizontal/vertical direction.
+  // Returns false if any square is unavailable
+  _checkSquares(from, size, vertical=false) {
+    let [x ,y] = this.squareCoordsFromName(from);
+    let xDiff = vertical ? 1 : 0;
+    let yDiff = vertical ? 0 : 1;
+    let squares = new Array(size);
+
+    // Check if all the squares are available
+    for (let i=0; i < size; i++) {
+      let currentX = x + xDiff * i;
+      let currentY = y + yDiff * i;
+
+      if (currentX >= 0 && currentX < this.N && currentY >= 0 && currentY < this.N) {
+        let currentSquare = this.squares[currentX][currentY];
+
+        if (currentSquare.available == true) {
+          squares[i] = currentSquare;
+        }
+        else {
+          return false;
+        }
+      }
+      else {
+        return false;
+      }
+    }
+
+    return squares;
+  }
+
   // Convert [0, 0] to 'A1'
   squareNameFromCoords(x, y) {
     return String.fromCharCode(charStart + x) + `${y + 1}`;
