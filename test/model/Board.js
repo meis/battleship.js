@@ -166,10 +166,59 @@ describe('Board', () => {
       "0000000000"
     ;
 
-    console.log(expected);
     assert.ok(b.putShipAt(ship, 'D5', true));
-    console.log(b.toString());
     assert.equal(b.toString(), expected);
   });
 
+  it('has reset methods', () => {
+    let b    = new Board();
+    let ship = new Ship(3);
+    let expected =
+      "0000000000\n" +
+      "0000000000\n" +
+      "0000000000\n" +
+      "0000000000\n" +
+      "0000000000\n" +
+      "0000000000\n" +
+      "0000000000\n" +
+      "0000000000\n" +
+      "0000000000\n" +
+      "0000000000"
+    ;
+
+    assert.ok(b.putShipAt(new Ship(3), 'D5', true));
+    assert.ok(b.putShipAt(new Ship(6), 'A1', false));
+    assert.ok(b.reset());
+    assert.equal(b.toString(), expected);
+  });
+
+  it('fills itself with required ships', () => {
+    let b = new Board();
+    let withShips = 0;
+
+    assert.ok(b.populate(5,4,4));
+    b.squares.forEach( col => {
+      col.forEach( square => {
+        if (square.ship) {
+          withShips++;
+        }
+      });
+    });
+    assert.equal(withShips, 13);
+  });
+
+  it('fills itself with required ships using the constructor', () => {
+    let b = new Board(5, 4, 4, 3, 3, 3, 2, 2, 2, 2);
+    let withShips = 0;
+
+    b.squares.forEach( col => {
+      col.forEach( square => {
+        if (square.ship) {
+          withShips++;
+        }
+      });
+    });
+
+    assert.equal(withShips, 30);
+  });
 });

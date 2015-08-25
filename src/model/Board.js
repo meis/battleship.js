@@ -1,11 +1,15 @@
 import Square from './Square';
+import Ship   from './Ship';
 
-let charStart = 65;
+let CharStart = 65;
+let MaxTriesPerShip = 10;
+let MaxTotalTries   = 10;
 
 export default class Board {
-  constructor() {
+  constructor(...ships) {
     this.N = 10;
     this._initializeSquares();
+    this.populate.apply(this, ships);
   }
 
   _initializeSquares() {
@@ -14,6 +18,37 @@ export default class Board {
         return new Square(this.squareNameFromCoords(x,y));
       } )
     } );
+  }
+
+  reset() {
+    this._initializeSquares();
+    return true;
+  }
+
+  populate(...ships) {
+    if (ships.length > 0) {
+      let tries = 0;
+
+      while (tries < MaxTotalTries) {
+        let spaceForAll = true;
+
+        ships.forEach( s => {
+          spaceForAll = spaceForAll && this._allocateShip(s);
+        } );
+
+        if (spaceForAll) {
+          return true;
+        }
+        // Try another configuration
+        else {
+          this.reset()
+        }
+      }
+
+      // Unable to allocate all the ships
+      this.reset();
+      return false;
+    }
   }
 
   getSquare(name) {
@@ -76,13 +111,13 @@ export default class Board {
 
   // Convert [0, 0] to 'A1'
   squareNameFromCoords(x, y) {
-    return String.fromCharCode(charStart + x) + `${y + 1}`;
+    return String.fromCharCode(CharStart + x) + `${y + 1}`;
   }
 
   // Convert 'A1' to [0, 0]
   squareCoordsFromName(name) {
     let [, character, number] = name.match(/([A-Z]+)(\d+)/);
-    return [character.charCodeAt(0) - charStart, number -1];
+    return [character.charCodeAt(0) - CharStart, number -1];
   }
 
   toString() {
@@ -96,6 +131,45 @@ export default class Board {
     });
 
     return string.substring(0, string.length - 1);;
+  }
+
+  // Put new ship of 'size' in a random available position.
+  // Return false if it's unable to allocate the ship.
+  // TODO: Improve heuristic. In this scenario 10x10 are fast, but
+  // it's possible to improve the way ships are allocated
+  // (ex: don't try to put ship(4) at 3< squares from border)
+  _allocateShip(size) {
+    let tries = 0;
+
+    while (tries < MaxTriesPerShip) {
+      let vert  = Math.random() > 0.5;
+      let avail = this._availableSquares();
+      let from  = avail[Math.floor(Math.random()*avail.length)].name;
+      let check = this._checkSquares(from, size, vert);
+
+      if (check) {
+        let ship = new Ship(size);
+        this.putShipAt(ship, from, vert);
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  // Return an array of all available squares
+  _availableSquares() {
+    let available = new Array();
+
+    this.squares.forEach( col => {
+      col.forEach( square => {
+        if (square.available) {
+          available.push(square)
+        }
+      });
+    });
+
+    return available;
   }
 
   // Return an array of 'size' available squares in
