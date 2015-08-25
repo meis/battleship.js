@@ -149,4 +149,27 @@ describe('Board', () => {
     assert.notOk(b.putShipAt(ship2, 'C3', true));
     assert.notOk(b.putShipAt(ship2, 'C8', true));
   });
+
+  it('puts ships in the expected squares', () => {
+    let b    = new Board();
+    let ship = new Ship(3);
+    let expected =
+      "0000000000\n" +
+      "0000000000\n" +
+      "0000000000\n" +
+      "0000#00000\n" +
+      "0000#00000\n" +
+      "0000#00000\n" +
+      "0000000000\n" +
+      "0000000000\n" +
+      "0000000000\n" +
+      "0000000000"
+    ;
+
+    console.log(expected);
+    assert.ok(b.putShipAt(ship, 'D5', true));
+    console.log(b.toString());
+    assert.equal(b.toString(), expected);
+  });
+
 });

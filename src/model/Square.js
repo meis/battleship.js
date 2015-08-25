@@ -23,4 +23,13 @@ export default class Square {
 
     return result;
   }
+
+  toString() {
+    if ( this._ship ) {
+      return this._hit ? 'X' : '#';
+    }
+    else {
+      return '0';
+    }
+  }
 }

@@ -74,6 +74,30 @@ export default class Board {
     }
   }
 
+  // Convert [0, 0] to 'A1'
+  squareNameFromCoords(x, y) {
+    return String.fromCharCode(charStart + x) + `${y + 1}`;
+  }
+
+  // Convert 'A1' to [0, 0]
+  squareCoordsFromName(name) {
+    let [, character, number] = name.match(/([A-Z]+)(\d+)/);
+    return [character.charCodeAt(0) - charStart, number -1];
+  }
+
+  toString() {
+    let string = '';
+
+    this.squares.forEach( col => {
+      col.forEach( square => {
+        string += square.toString();
+      });
+      string += "\n";
+    });
+
+    return string.substring(0, string.length - 1);;
+  }
+
   // Return an array of 'size' available squares in
   // horizontal/vertical direction.
   // Returns false if any square is unavailable
@@ -104,16 +128,5 @@ export default class Board {
     }
 
     return squares;
-  }
-
-  // Convert [0, 0] to 'A1'
-  squareNameFromCoords(x, y) {
-    return String.fromCharCode(charStart + x) + `${y + 1}`;
-  }
-
-  // Convert 'A1' to [0, 0]
-  squareCoordsFromName(name) {
-    let [, character, number] = name.match(/([A-Z]+)(\d+)/);
-    return [character.charCodeAt(0) - charStart, number -1];
   }
 }
