@@ -221,4 +221,31 @@ describe('Board', () => {
 
     assert.equal(withShips, 30);
   });
+
+  it('throws error on impossible allocations', () => {
+    let impossibleConstructor = function() {
+      return new Board(11);
+    }
+    assert.throw(impossibleConstructor, "Unable to allocate all the ships");
+
+    impossibleConstructor = function() {
+      return new Board(10, 10, 10, 10, 10, 10);
+    }
+    assert.throw(impossibleConstructor, "Unable to allocate all the ships");
+  });
+
+  it('ends game if all ships are sunk', () => {
+    let b = new Board();
+
+    assert.ok(b.putShipAt(new Ship(4), 'A1', false));
+
+    assert.ok(b.shot('A1'));
+    assert.notOk(b.finished());
+    assert.ok(b.shot('A2'));
+    assert.notOk(b.finished());
+    assert.ok(b.shot('A3'));
+    assert.notOk(b.finished());
+    assert.ok(b.shot('A4'));
+    assert.ok(b.finished());
+  });
 });

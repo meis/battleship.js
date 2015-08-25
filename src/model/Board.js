@@ -25,6 +25,21 @@ export default class Board {
     return true;
   }
 
+  // TODO: Keep track of ships to perform this
+  // operation in constant time.
+  finished() {
+    let finished = true;
+    this.squares.forEach( col => {
+      col.forEach( square => {
+        if (square.ship && !square.ship.sunk) {
+          finished = false;
+        }
+      });
+    });
+
+    return finished;
+  }
+
   populate(...ships) {
     if (ships.length > 0) {
       let tries = 0;
@@ -41,13 +56,15 @@ export default class Board {
         }
         // Try another configuration
         else {
+          tries++;
           this.reset()
         }
       }
 
       // Unable to allocate all the ships
       this.reset();
-      return false;
+
+      throw 'Unable to allocate all the ships';
     }
   }
 
@@ -56,9 +73,9 @@ export default class Board {
     return this.squares[x][y];
   }
 
-  hit(name) {
+  shot(name) {
     let [x, y] = this.squareCoordsFromName(name);
-    return this.squares[x][y].hit();
+    return this.squares[x][y].shot();
   }
 
   neighbourSquares(name) {
@@ -140,17 +157,21 @@ export default class Board {
   // (ex: don't try to put ship(4) at 3< squares from border)
   _allocateShip(size) {
     let tries = 0;
+    let avail = this._availableSquares();
 
-    while (tries < MaxTriesPerShip) {
-      let vert  = Math.random() > 0.5;
-      let avail = this._availableSquares();
-      let from  = avail[Math.floor(Math.random()*avail.length)].name;
-      let check = this._checkSquares(from, size, vert);
+    if ( avail.length > 0 ) {
+      while (tries < MaxTriesPerShip) {
+        let vert  = Math.random() > 0.5;
+        let from  = avail[Math.floor(Math.random()*avail.length)].name;
+        let check = this._checkSquares(from, size, vert);
 
-      if (check) {
-        let ship = new Ship(size);
-        this.putShipAt(ship, from, vert);
-        return true;
+        if (check) {
+          let ship = new Ship(size);
+          this.putShipAt(ship, from, vert);
+          return true;
+        }
+
+        tries++;
       }
     }
 
