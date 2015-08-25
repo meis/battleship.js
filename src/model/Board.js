@@ -21,6 +21,11 @@ export default class Board {
     return this.squares[x][y];
   }
 
+  hit(name) {
+    let [x, y] = this.squareCoordsFromName(name);
+    return this.squares[x][y].hit();
+  }
+
   neighbourSquares(name) {
     let [x, y] = this.squareCoordsFromName(name);
 
