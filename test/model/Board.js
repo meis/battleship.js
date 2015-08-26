@@ -223,15 +223,9 @@ describe('Board', () => {
   });
 
   it('throws error on impossible allocations', () => {
-    let impossibleConstructor = function() {
-      return new Board(11);
-    }
-    assert.throw(impossibleConstructor, "Unable to allocate all the ships");
+    assert.throw(() => { new Board(11) }, "Unable to allocate all the ships");
 
-    impossibleConstructor = function() {
-      return new Board(10, 10, 10, 10, 10, 10);
-    }
-    assert.throw(impossibleConstructor, "Unable to allocate all the ships");
+    assert.throw(() => { new Board(10, 10 ,10 ,10, 10, 10) }, "Unable to allocate all the ships");
   });
 
   it('ends game if all ships are sunk', () => {
@@ -247,5 +241,29 @@ describe('Board', () => {
     assert.notOk(b.finished());
     assert.ok(b.shot('A4'));
     assert.ok(b.finished());
+  });
+
+  it('informs of invalid shots', () => {
+    let b = new Board();
+
+    assert.ok(b.validShot('A1'));
+    assert.ok(b.validShot('C5'));
+    assert.ok(b.validShot('J10'));
+    assert.ok(b.validShot('I7'));
+
+    assert.notOk(b.validShot(''));
+    assert.notOk(b.validShot('C55'));
+    assert.notOk(b.validShot('D'));
+    assert.notOk(b.validShot('lalala'));
+    assert.notOk(b.validShot('83'));
+  });
+
+  it('throws error on invalid shots', () => {
+    let b = new Board();
+
+    assert.throw( () => b.shot('XX') );
+    assert.throw( () => b.shot('A22') );
+    assert.throw( () => b.shot('') );
+    assert.throw( () => b.shot('83') );
   });
 });

@@ -125,31 +125,38 @@ var Board = (function () {
       var x = _squareCoordsFromName2[0];
       var y = _squareCoordsFromName2[1];
 
-      return this.squares[x][y];
+      if (this._validCoord(x) && this._validCoord(y)) {
+        return this.squares[x][y];
+      }
+
+      throw 'Invalid coordinates';
+    }
+  }, {
+    key: 'validShot',
+    value: function validShot(name) {
+      try {
+        this.getSquare(name);
+        return true;
+      } catch (e) {
+        return false;
+      }
     }
   }, {
     key: 'shot',
     value: function shot(name) {
-      var _squareCoordsFromName3 = this.squareCoordsFromName(name);
-
-      var _squareCoordsFromName32 = _slicedToArray(_squareCoordsFromName3, 2);
-
-      var x = _squareCoordsFromName32[0];
-      var y = _squareCoordsFromName32[1];
-
-      return this.squares[x][y].shot();
+      return this.getSquare(name).shot();
     }
   }, {
     key: 'neighbourSquares',
     value: function neighbourSquares(name) {
       var _this3 = this;
 
-      var _squareCoordsFromName4 = this.squareCoordsFromName(name);
+      var _squareCoordsFromName3 = this.squareCoordsFromName(name);
 
-      var _squareCoordsFromName42 = _slicedToArray(_squareCoordsFromName4, 2);
+      var _squareCoordsFromName32 = _slicedToArray(_squareCoordsFromName3, 2);
 
-      var x = _squareCoordsFromName42[0];
-      var y = _squareCoordsFromName42[1];
+      var x = _squareCoordsFromName32[0];
+      var y = _squareCoordsFromName32[1];
 
       var neighbours = new Set();
       var movements = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
@@ -160,7 +167,7 @@ var Board = (function () {
         var mX = x + m[0];
         var mY = y + m[1];
 
-        if (mX >= 0 && mX < _this3.N && mY >= 0 && mY < _this3.N) {
+        if (_this3._validCoord(mX) && _this3._validCoord(mY)) {
           neighbours.add(_this3.squareNameFromCoords(mX, mY));
         }
       });
@@ -186,14 +193,7 @@ var Board = (function () {
           s.ship = ship;
           s.available = false;
           _this4.neighbourSquares(s.name).forEach(function (n) {
-            var _squareCoordsFromName5 = _this4.squareCoordsFromName(n);
-
-            var _squareCoordsFromName52 = _slicedToArray(_squareCoordsFromName5, 2);
-
-            var x = _squareCoordsFromName52[0];
-            var y = _squareCoordsFromName52[1];
-
-            _this4.squares[x][y].available = false;
+            _this4.getSquare(n).available = false;
           });
         });
 
@@ -214,14 +214,18 @@ var Board = (function () {
   }, {
     key: 'squareCoordsFromName',
     value: function squareCoordsFromName(name) {
-      var _name$match = name.match(/([A-Z]+)(\d+)/);
+      try {
+        var _name$match = name.match(/([A-Z]+)(\d+)/);
 
-      var _name$match2 = _slicedToArray(_name$match, 3);
+        var _name$match2 = _slicedToArray(_name$match, 3);
 
-      var character = _name$match2[1];
-      var number = _name$match2[2];
+        var character = _name$match2[1];
+        var number = _name$match2[2];
 
-      return [character.charCodeAt(0) - CharStart, number - 1];
+        return [character.charCodeAt(0) - CharStart, number - 1];
+      } catch (e) {
+        throw "Invalid square name " + name;
+      }
     }
   }, {
     key: 'toString',
@@ -284,6 +288,11 @@ var Board = (function () {
 
       return available;
     }
+  }, {
+    key: '_validCoord',
+    value: function _validCoord(c) {
+      return c >= 0 && c < this.N;
+    }
 
     // Return an array of 'size' available squares in
     // horizontal/vertical direction.
@@ -293,12 +302,12 @@ var Board = (function () {
     value: function _checkSquares(from, size) {
       var vertical = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
 
-      var _squareCoordsFromName6 = this.squareCoordsFromName(from);
+      var _squareCoordsFromName4 = this.squareCoordsFromName(from);
 
-      var _squareCoordsFromName62 = _slicedToArray(_squareCoordsFromName6, 2);
+      var _squareCoordsFromName42 = _slicedToArray(_squareCoordsFromName4, 2);
 
-      var x = _squareCoordsFromName62[0];
-      var y = _squareCoordsFromName62[1];
+      var x = _squareCoordsFromName42[0];
+      var y = _squareCoordsFromName42[1];
 
       var xDiff = vertical ? 1 : 0;
       var yDiff = vertical ? 0 : 1;
@@ -309,7 +318,7 @@ var Board = (function () {
         var currentX = x + xDiff * i;
         var currentY = y + yDiff * i;
 
-        if (currentX >= 0 && currentX < this.N && currentY >= 0 && currentY < this.N) {
+        if (this._validCoord(currentX) && this._validCoord(currentY)) {
           var currentSquare = this.squares[currentX][currentY];
 
           if (currentSquare.available == true) {

@@ -70,12 +70,26 @@ export default class Board {
 
   getSquare(name) {
     let [x, y] = this.squareCoordsFromName(name);
-    return this.squares[x][y];
+
+    if (this._validCoord(x) && this._validCoord(y)) {
+      return this.squares[x][y];
+    }
+
+    throw 'Invalid coordinates';
+  }
+
+  validShot(name) {
+    try {
+      this.getSquare(name);
+      return true;
+    }
+    catch(e) {
+      return false;
+    }
   }
 
   shot(name) {
-    let [x, y] = this.squareCoordsFromName(name);
-    return this.squares[x][y].shot();
+    return this.getSquare(name).shot();
   }
 
   neighbourSquares(name) {
@@ -94,7 +108,7 @@ export default class Board {
       let mX = x + m[0];
       let mY = y + m[1];
 
-      if (mX >= 0 && mX < this.N && mY >= 0 && mY < this.N) {
+      if (this._validCoord(mX) && this._validCoord(mY)) {
         neighbours.add(this.squareNameFromCoords(mX, mY));
       }
     } );
@@ -114,8 +128,7 @@ export default class Board {
         s.ship = ship;
         s.available = false;
         this.neighbourSquares(s.name).forEach( n => {
-          let [x, y] = this.squareCoordsFromName(n);
-          this.squares[x][y].available = false;
+          this.getSquare(n).available = false;
         } );
       } );
 
@@ -133,8 +146,13 @@ export default class Board {
 
   // Convert 'A1' to [0, 0]
   squareCoordsFromName(name) {
-    let [, character, number] = name.match(/([A-Z]+)(\d+)/);
-    return [character.charCodeAt(0) - CharStart, number -1];
+    try {
+      let [, character, number] = name.match(/([A-Z]+)(\d+)/);
+      return [character.charCodeAt(0) - CharStart, number -1];
+    }
+    catch(e) {
+      throw "Invalid square name " + name;
+    }
   }
 
   toString() {
@@ -193,6 +211,10 @@ export default class Board {
     return available;
   }
 
+  _validCoord(c) {
+    return c >= 0 && c < this.N
+  }
+
   // Return an array of 'size' available squares in
   // horizontal/vertical direction.
   // Returns false if any square is unavailable
@@ -207,7 +229,7 @@ export default class Board {
       let currentX = x + xDiff * i;
       let currentY = y + yDiff * i;
 
-      if (currentX >= 0 && currentX < this.N && currentY >= 0 && currentY < this.N) {
+      if (this._validCoord(currentX) && this._validCoord(currentY)) {
         let currentSquare = this.squares[currentX][currentY];
 
         if (currentSquare.available == true) {
