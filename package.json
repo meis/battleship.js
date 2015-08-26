@@ -2,10 +2,9 @@
   "name": "battleship.js",
   "version": "0.0.1",
   "description": "Tiny battleship game for console",
-  "main": "battleship.js",
   "private": true,
   "scripts": {
-    "start": "node battleship.js",
+    "start": "node dist/index.js",
     "test": "gulp test",
     "compile": "gulp build"
   },
@@ -21,14 +20,15 @@
   "homepage": "https://github.com/meis/battleship.js",
   "devDependencies": {
     "babel": "^5.8.21",
-    "babelify": "^6.2.0",
-    "browserify": "^11.0.1",
     "chai": "^3.2.0",
     "gulp": "^3.9.0",
+    "gulp-babel": "^5.2.1",
     "gulp-concat": "^2.6.0",
     "gulp-mocha": "^2.1.3",
     "gulp-util": "^3.0.6",
-    "mocha": "^2.2.5",
-    "vinyl-source-stream": "^1.1.0"
+    "mocha": "^2.2.5"
+  },
+  "dependencies": {
+    "prompt": "^0.2.14"
   }
 }

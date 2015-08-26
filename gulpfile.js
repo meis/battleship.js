@@ -1,25 +1,17 @@
-var gulp       = require('gulp');
-var mocha      = require('gulp-mocha');
-var util       = require('gulp-util');
-var concat     = require('gulp-concat');
-var babel      = require('babel/register');
-var source     = require('vinyl-source-stream');
-var babelify   = require('babelify');
-var browserify = require('browserify');
+var gulp   = require('gulp');
+var mocha  = require('gulp-mocha');
+var util   = require('gulp-util');
+var concat = require('gulp-concat');
+var babel  = require('babel/register');
+var gBabel = require('gulp-babel');
 
 gulp.task('default', ['build']);
 
 gulp.task('build', function () {
-  browserify({
-    entries: 'src/index.js',
-    extensions: ['.js'],
-    debug: true
-  })
-  .transform(babelify)
-  .bundle()
-  .pipe(source('battleship.js'))
-  .pipe(gulp.dest('.'))
-  .on('error', util.log);
+  return gulp.src("src/**/*.js")
+    .pipe(gBabel())
+    .pipe(gulp.dest("dist"))
+    .on('error', util.log);
 });
 
 gulp.task('test', ['build'], function () {
