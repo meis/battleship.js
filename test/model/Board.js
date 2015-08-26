@@ -129,6 +129,37 @@ describe('Board', () => {
     assert.notOk(b.getSquare('A5').available);
   });
 
+  it('suports lowercase input', () => {
+    let b    = new Board();
+    let ship = new Ship(4);
+
+    assert.ok(b.putShipAt(ship, 'A1', false));
+
+    // Squares with ship
+    assert.equal(b.getSquare('a1').ship, ship);
+    assert.notOk(b.getSquare('a1').available);
+    assert.equal(b.getSquare('a2').ship, ship);
+    assert.notOk(b.getSquare('a2').available);
+    assert.equal(b.getSquare('a3').ship, ship);
+    assert.notOk(b.getSquare('a3').available);
+    assert.equal(b.getSquare('a4').ship, ship);
+    assert.notOk(b.getSquare('a4').available);
+
+    // Adjacent squares
+    assert.equal(b.getSquare('b1').ship, undefined);
+    assert.notOk(b.getSquare('b1').available);
+    assert.equal(b.getSquare('b2').ship, undefined);
+    assert.notOk(b.getSquare('b2').available);
+    assert.equal(b.getSquare('b3').ship, undefined);
+    assert.notOk(b.getSquare('b3').available);
+    assert.equal(b.getSquare('b4').ship, undefined);
+    assert.notOk(b.getSquare('b4').available);
+    assert.equal(b.getSquare('b5').ship, undefined);
+    assert.notOk(b.getSquare('b5').available);
+    assert.equal(b.getSquare('a5').ship, undefined);
+    assert.notOk(b.getSquare('a5').available);
+  });
+
   it('returns false when trying to put ships at unavailable squares', () => {
     let b     = new Board();
     let ship1 = new Ship(4);

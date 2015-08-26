@@ -147,7 +147,8 @@ export default class Board {
   // Convert 'A1' to [0, 0]
   squareCoordsFromName(name) {
     try {
-      let [, character, number] = name.match(/([A-Z]+)(\d+)/);
+      let [, character, number] = name.match(/([A-Za-z]+)(\d+)/);
+      character = character.toUpperCase();
       return [character.charCodeAt(0) - CharStart, number -1];
     }
     catch(e) {

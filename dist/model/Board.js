@@ -215,13 +215,14 @@ var Board = (function () {
     key: 'squareCoordsFromName',
     value: function squareCoordsFromName(name) {
       try {
-        var _name$match = name.match(/([A-Z]+)(\d+)/);
+        var _name$match = name.match(/([A-Za-z]+)(\d+)/);
 
         var _name$match2 = _slicedToArray(_name$match, 3);
 
         var character = _name$match2[1];
         var number = _name$match2[2];
 
+        character = character.toUpperCase();
         return [character.charCodeAt(0) - CharStart, number - 1];
       } catch (e) {
         throw "Invalid square name " + name;
